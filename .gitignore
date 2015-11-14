@@ -24,6 +24,10 @@ _testmain.go
 *.test
 *.prof
 mini-dns
+mini-dns-darwin-386
+mini-dns-darwin-amd64
+mini-dns-linux-386
+mini-dns-linux-amd64
 
 .idea
 *.iml

@@ -1,0 +1,23 @@
+# docker build -t dns-cross -f Dockerfile.cross .
+# docker create --name mini-dns dns-cross -
+# docker cp mini-dns:/usr/src/app/mini-dns-linux-amd64 .
+# docker rm mini-dns
+
+FROM golang:1.4-cross
+MAINTAINER Tobias Gesellchen <tobias@gesellix.de> (@gesellix)
+
+WORKDIR /usr/src/app
+COPY . /usr/src/app
+
+ENV GOBIN $GOPATH/bin
+RUN go get -d -v; go install -v
+
+RUN for GOOS in darwin linux; do \
+      export GOOS; \
+      for GOARCH in 386 amd64; do \
+        export GOARCH; \
+        go build -v -o mini-dns-$GOOS-$GOARCH; \
+      done \
+    done
+
+CMD [ "ls", "-lisah" ]
