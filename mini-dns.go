@@ -69,7 +69,7 @@ func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 		//		}
 	}
 
-	glog.Infof("response\n%v\n", m.String())
+	glog.Infof("response:\n%v\n", m.String())
 
 	w.WriteMsg(m)
 }
