@@ -49,7 +49,11 @@ func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 	var addrs []string
 	for _, line := range hosts.Lines {
 		if !line.IsComment() {
-			addrs = append(addrs, line.IP)
+			for _, host := range line.Hosts {
+				if firstQuestion == host {
+					addrs = append(addrs, line.IP)
+				}
+			}
 		}
 	}
 	if len(addrs) == 0 {

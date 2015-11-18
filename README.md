@@ -2,7 +2,7 @@
 
 run:
 
-    docker run --rm -dit -p 5555:5353 gesellix/mini-dns
+    docker run --rm -it -p 5555:5353/udp gesellix/mini-dns
 
 cross compile the binary:
 
