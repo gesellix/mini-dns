@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net"
 	"os"
 	"os/signal"
@@ -9,8 +10,8 @@ import (
 	"syscall"
 
 	"github.com/golang/glog"
+	"github.com/lextoumbourou/goodhosts"
 	"github.com/miekg/dns"
-	"log"
 )
 
 func newRR(host string, addr net.IP) (dns.RR) {
@@ -44,7 +45,17 @@ func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 	m := new(dns.Msg)
 	m.SetReply(r)
 
-	addrs, _ := net.LookupHost(firstQuestion)
+	hosts, _ := goodhosts.NewHosts()
+	var addrs []string
+	for _, line := range hosts.Lines {
+		if !line.IsComment() {
+			addrs = append(addrs, line.IP)
+		}
+	}
+	if len(addrs) == 0 {
+		glog.Infof("fallback to standard lookup")
+		addrs, _ = net.LookupHost(firstQuestion)
+	}
 	glog.Infof("hosts: %v\n", addrs)
 	log.Printf("hosts(%v): %v\n", firstQuestion, addrs)
 	match := findFirstIPv4(addrs)
@@ -56,17 +67,6 @@ func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 		rr := newRR(firstQuestion, a)
 		m.Answer = append(m.Answer, rr)
 		m.Authoritative = true
-		//	} else {
-		//		import 	"github.com/bogdanovich/dns_resolver"
-		//		glog.Infof("fallback via resolv.conf...")
-		//		resolver, _ := dns_resolver.NewFromResolvConf("/etc/resolv.conf")
-		//		result, _ := resolver.LookupHost(firstQuestion)
-		//		glog.Infof("...result: %v\n", result)
-		//		if len(result) > 0 {
-		//			rr = newRR(firstQuestion, result[0])
-		//			m.Answer = append(m.Answer, rr)
-		//			m.Authoritative = true
-		//		}
 	}
 
 	glog.Infof("response:\n%v\n", m.String())

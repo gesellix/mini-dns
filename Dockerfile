@@ -4,10 +4,13 @@ MAINTAINER Tobias Gesellchen <tobias@gesellix.de> (@gesellix)
 ENV GOPATH /go
 ENV APPPATH $GOPATH/src/github.com/gesellix/mini-dns
 
-COPY . $APPPATH
-
 ENV ADD_PACKAGES git mercurial libc-dev gcc libgcc go@community
 ENV DEL_PACKAGES git mercurial libc-dev gcc libgcc go
+
+COPY . $APPPATH
+
+# see https://golang.org/pkg/net/?m=all#hdr-Name_Resolution
+#ENV GODEBUG netdns=1
 RUN echo '@community http://dl-4.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories \
     && apk upgrade --update --available \
     && apk add $ADD_PACKAGES \
