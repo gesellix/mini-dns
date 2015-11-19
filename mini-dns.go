@@ -40,7 +40,7 @@ func findFirstIPv4(addrs []string) (match string) {
 
 func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 	firstQuestion := r.Question[0].Name
-	glog.Infof("first question: %v\n", firstQuestion)
+	glog.Infof("question[0]: %v\n", firstQuestion)
 
 	m := new(dns.Msg)
 	m.SetReply(r)
@@ -50,7 +50,7 @@ func handleFirstHost(w dns.ResponseWriter, r *dns.Msg) {
 	for _, line := range hosts.Lines {
 		if !line.IsComment() {
 			for _, host := range line.Hosts {
-				if firstQuestion == host {
+				if firstQuestion == host + "." {
 					addrs = append(addrs, line.IP)
 				}
 			}
