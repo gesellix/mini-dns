@@ -9,8 +9,9 @@ ENV DEL_PACKAGES git mercurial libc-dev gcc libgcc drill iproute2 iputils go
 
 # http://wiki.alpinelinux.org/wiki/Configure_Networking
 
+# enforce go to prefer /etc/hosts
 # see https://golang.org/pkg/net/?m=all#hdr-Name_Resolution
-#ENV GODEBUG netdns=1
+ENV GODEBUG netdns=go+1
 
 COPY . $APPPATH
 
